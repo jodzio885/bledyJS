@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Błąd JS #06: Assignment to constant variable | Pogotowie Błędów</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-red: #ef4444;
+      --accent-red-bg: #451a1a;
+      --accent-green: #22c55e;
+      --accent-green-bg: #14532d;
+      --accent-blue: #38bdf8;
+      --accent-yellow: #f59e0b;
+      --code-bg: #090d16;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px 16px 60px;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-red-bg);
+      color: #fca5a5;
+      border: 1px solid #7f1d1d;
+    }
+
+    .nav-link { color: var(--accent-blue); text-decoration: none; font-size: 14px; font-weight: 500; }
+    .nav-link:hover { text-decoration: underline; }
+
+    h1 { font-size: 26px; font-weight: 800; margin-top: 8px; color: #fff; }
+
+    .error-banner {
+      background: #2a1215;
+      border-left: 5px solid var(--accent-red);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .error-banner-title {
+      font-size: 13px;
+      color: #fca5a5;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .error-text {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: #fecaca;
+      word-break: break-all;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    pre, code { font-family: var(--font-mono); }
+    pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 14px;
+      border: 1px solid #1e293b;
+      margin: 10px 0;
+    }
+    code.inline {
+      background: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    @media (max-width: 720px) { .diff-grid { grid-template-columns: 1fr; } }
+    .diff-col { border-radius: 8px; padding: 14px; font-size: 14px; }
+    .diff-bad { background: #2a1215; border: 1px solid #7f1d1d; }
+    .diff-good { background: #0f291e; border: 1px solid #14532d; }
+    .diff-header { font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .diff-bad .diff-header { color: #f87171; }
+    .diff-good .diff-header { color: #4ade80; }
+
+    .btn-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+    button.btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    button.btn:hover { background: #475569; border-color: #64748b; }
+    button.btn-danger { background: #991b1b; border-color: #dc2626; }
+    button.btn-danger:hover { background: #b91c1c; }
+    button.btn-success { background: #166534; border-color: #22c55e; }
+    button.btn-success:hover { background: #15803d; }
+
+    .mock-console {
+      background: #000;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      min-height: 80px;
+      color: #e2e8f0;
+    }
+    .mock-console-header {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 11px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .console-msg-error {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #ef4444;
+      margin-bottom: 4px;
+    }
+    .console-msg-success {
+      color: #4ade80;
+      background: rgba(34, 197, 94, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #22c55e;
+      margin-bottom: 4px;
+    }
+
+    .quiz-box {
+      background: #0b1329;
+      border: 1px solid #1e3a8a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .quiz-option {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+    .quiz-option:hover { background: #334155; }
+    .quiz-option.correct { background: #14532d; border-color: #22c55e; color: #86efac; }
+    .quiz-option.wrong { background: #451a1a; border-color: #ef4444; color: #fca5a5; }
+    .quiz-feedback { margin-top: 12px; font-size: 14px; font-weight: 600; min-height: 24px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <span class="badge">Karta Błędu JS #06</span>
+        <h1>Assignment to constant variable</h1>
+      </div>
+      <a href="index.html" class="nav-link">← Powrót do spisu błędów</a>
+    </header>
+
+    <div class="error-banner">
+      <div class="error-banner-title">Komunikat w konsoli:</div>
+      <div class="error-text">Uncaught TypeError: Assignment to constant variable.</div>
+      <div class="error-alt">Występuje zawsze przy próbie użycia znaku równości <code class="inline">=</code> na zmiennej zadeklarowanej przez <code class="inline">const</code>.</div>
+    </div>
+
+    <!-- 1. DIAGNOZA -->
+    <div class="card">
+      <div class="card-title">1. Opis i przyczyna wystąpienia błędu</div>
+      <p>Słowo kluczowe <code class="inline">const</code> tworzy <strong>stałą referencję</strong>. Oznacza to, że po przypisaniu początkowej wartości NIE MOŻESZ użyć operatora przypisania <code class="inline">=</code> ani operatorów inkrementacji <code class="inline">++</code> czy <code class="inline">--</code>.</p>
+      <br>
+      <div style="background: #090d16; border-left: 4px solid var(--accent-yellow); padding: 12px; border-radius: 4px; font-size: 14px;">
+        <strong>Najważniejsza pułapka (Mutacja a Re-assignment):</strong><br>
+        • <code class="inline">const liczby = [1, 2]; liczby.push(3);</code> &rarr; <strong>DZIAŁA!</strong> Modyfikujesz zawartość tablicy, ale nie zmieniasz samej referencji do tablicy.<br>
+        • <code class="inline">const liczby = [1, 2]; liczby = [1, 2, 3];</code> &rarr; <strong>BŁĄD!</strong> Znak <code class="inline">=</code> to próba ponownego przypisania.
+      </div>
+    </div>
+
+    <!-- 2. POLIGON -->
+    <div class="card">
+      <div class="card-title">2. Środowisko testowe: Symulacja błędu w DevTools</div>
+      <div class="btn-group">
+        <button class="btn btn-danger" onclick="triggerConstReassign()">Symulacja: Nadpisanie const licznik++</button>
+        <button class="btn btn-danger" onclick="triggerConstLoop()">Symulacja: const w pętli for (const i=0...)</button>
+        <button class="btn btn-success" onclick="triggerConstMutate()">Kod poprawny: Mutacja tablicy z const</button>
+        <button class="btn" onclick="clearConsoleLog()">Czyść podgląd</button>
+      </div>
+
+      <div class="mock-console">
+        <div class="mock-console-header">
+          <span>PODGLĄD KONSOLI</span>
+          <span id="consoleStatus">Gotowa</span>
+        </div>
+        <div id="consoleOutput">
+          <span style="color: #64748b;">// Kliknij przycisk powyżej...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. WZORCE NAPRAWY -->
+    <div class="card">
+      <div class="card-title">3. Reguły deklaracji: Wybór let lub const</div>
+      <div class="diff-grid">
+        <div class="diff-col diff-bad">
+          <div class="diff-header">KOD NIEPOPRAWNY: Licznik zadeklarowany jako const</div>
+<pre><code>// Licznik kliknięć będzie się zmieniał:
+const klikniecia = 0;
+
+button.addEventListener('click', () => {
+  // BŁĄD! TypeError
+  klikniecia++; 
+});</code></pre>
+        </div>
+
+        <div class="diff-col diff-good">
+          <div class="diff-header">KOD POPRAWNY: Zastosowanie deklaracji 'let'</div>
+<pre><code>// Jeśli wartość ma się zmieniać, użyj let:
+let klikniecia = 0;
+
+button.addEventListener('click', () => {
+  klikniecia++; // Działa perfekcyjnie!
+  console.log('Kliknięto:', klikniecia);
+});</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. QUIZ -->
+    <div class="card">
+      <div class="card-title">4. Zadanie sprawdzające</div>
+      <p>Który z poniższych fragmentów kodu <strong>NIE</strong> rzuci błędu <em>Assignment to constant variable</em>?</p>
+
+      <div class="quiz-box">
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'W pętli for po pierwszym przejściu następuje i++, czyli ponowne przypisanie do const. Rzuci błąd!')">
+          A) <code>for (const i = 0; i &lt; 5; i++) { ... }</code>
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'Brawo! Metoda .push() modyfikuje zawartość tablicy, nie zmieniając referencji const do obiektu w pamięci.')">
+          B) <code>const koszyk = []; koszyk.push('Chleb');</code>
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'Znak równości = to ponowne przypisanie nowej tablicy do stałej. Rzuci TypeError!')">
+          C) <code>const koszyk = []; koszyk = ['Chleb'];</code>
+        </div>
+        <div id="quizFeedback" class="quiz-feedback"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const output = document.getElementById('consoleOutput');
+    const status = document.getElementById('consoleStatus');
+
+    function logErrorToMockConsole(msg, fileLine) {
+      status.textContent = 'Błąd runtime!';
+      status.style.color = '#f87171';
+      output.innerHTML = `
+        <div class="console-msg-error">
+          <strong>[BŁĄD] Uncaught TypeError:</strong> ${msg}
+          <div style="font-size: 11px; color: #fca5a5; margin-top: 3px;">at ${fileLine}</div>
+        </div>
+      `;
+    }
+
+    function logSuccessToMockConsole(msg) {
+      status.textContent = 'Sukces';
+      status.style.color = '#4ade80';
+      output.innerHTML = `
+        <div class="console-msg-success">
+          <strong> Sukces:</strong> ${msg}
+        </div>
+      `;
+    }
+
+    function clearConsoleLog() {
+      output.innerHTML = '<span style="color: #64748b;">// Konsola wyczyszczona.</span>';
+      status.textContent = 'Gotowa';
+      status.style.color = '#64748b';
+    }
+
+    function triggerConstReassign() {
+      try {
+        eval("const licznik = 0; licznik = 1;");
+      } catch (err) {
+        logErrorToMockConsole("Assignment to constant variable.", "skrypt.js:2:1");
+        console.error("Autentyczny błąd:", err);
+      }
+    }
+
+    function triggerConstLoop() {
+      try {
+        eval("for (const i = 0; i < 2; i++) {}");
+      } catch (err) {
+        logErrorToMockConsole("Assignment to constant variable. (pętla for z const)", "petla.js:1:28");
+        console.error("Autentyczny błąd:", err);
+      }
+    }
+
+    function triggerConstMutate() {
+      const owoce = ['jabłko'];
+      owoce.push('banan');
+      logSuccessToMockConsole(`Modyfikacja tablicy przez .push() zadziałała: [${owoce.join(', ')}]`);
+      console.log("Tablica po .push():", owoce);
+    }
+
+    function checkQuiz(element, isCorrect, explanation) {
+      const options = document.querySelectorAll('.quiz-option');
+      options.forEach(opt => opt.classList.remove('correct', 'wrong'));
+      
+      const feedback = document.getElementById('quizFeedback');
+      if (isCorrect) {
+        element.classList.add('correct');
+        feedback.style.color = '#4ade80';
+        feedback.textContent = ` DOBRZE! ${explanation}`;
+      } else {
+        element.classList.add('wrong');
+        feedback.style.color = '#f87171';
+        feedback.textContent = `[ODPOWIEDŹ BŁĘDNA] ${explanation}`;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procedura Diagnostyczna: Identyfikacja Wad Działania Skryptów | INF.03</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #38bdf8;
+      --accent-muted: #64748b;
+      --code-bg: #090d16;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-link:hover {
+      background: #273549;
+      border-color: var(--accent-primary);
+    }
+
+    .header-block {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 20px 24px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .doc-meta {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .lead-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .section-box {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-primary);
+      margin-bottom: 8px;
+      font-family: var(--font-mono);
+    }
+    .section-heading {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .option-btn {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .option-btn:hover {
+      border-color: var(--accent-primary);
+      background: #111b2e;
+    }
+    .option-btn.active {
+      border-color: var(--accent-primary);
+      background: #0d1e36;
+      border-left: 3px solid var(--accent-primary);
+    }
+    .opt-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .opt-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .opt-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .procedure-panel {
+      display: none;
+      border: 1px solid var(--accent-primary);
+      background: #0c182b;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .proc-header {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #fff;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-family: var(--font-mono);
+    }
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--accent-primary);
+      border-radius: 3px;
+      color: var(--accent-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090d16;
+    }
+    .step-content h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .step-content p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    code.tech-code {
+      font-family: var(--font-mono);
+      background: #090d16;
+      border: 1px solid #334155;
+      padding: 2px 5px;
+      border-radius: 3px;
+      color: #38bdf8;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="index.html" class="btn-link">← Przejdź do spisu modułów</a>
+    <a href="karta_ratunkowa_sciaga.html" class="btn-link">Arkusz referencyjny</a>
+  </div>
+
+  <div class="header-block">
+    <div class="doc-meta">PROCEDURY DIAGNOSTYCZNE // KWALIFIKACJA INF.03 / INF.04</div>
+    <h1>Procedura Diagnostyczna: Identyfikacja Wad Działania Skryptu</h1>
+    <p class="lead-text">Algorytm postępowania przy braku oczekiwanych rezultatów działania skryptu po stronie klienta.</p>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">ETAP 1: Kwalifikacja Symptomu</div>
+    <div class="section-heading">Wskaż zaobserwowany objaw w środowisku uruchomieniowym:</div>
+
+    <div class="options-grid">
+      <div class="option-btn" onclick="activateProcedure('runtime')">
+        <div class="opt-code">[SYM-01]</div>
+        <div class="opt-name">Błąd w konsoli (Runtime Error)</div>
+        <div class="opt-desc">Wyjątek zgłoszony w konsoli: TypeError, ReferenceError lub SyntaxError.</div>
+      </div>
+
+      <div class="option-btn" onclick="activateProcedure('no_event')">
+        <div class="opt-code">[SYM-02]</div>
+        <div class="opt-name">Brak reakcji na zdarzenie</div>
+        <div class="opt-desc">Brak zgłoszeń w konsoli, interfejs użytkownika nie wykonuje przypisanej akcji.</div>
+      </div>
+
+      <div class="option-btn" onclick="activateProcedure('type_error')">
+        <div class="opt-code">[SYM-03]</div>
+        <div class="opt-name">Nieprawidłowy wynik (NaN / String)</div>
+        <div class="opt-desc">Funkcja wykonuje się bez wyjątku, lecz zwraca zafałszowane wartości logiczne lub liczbowe.</div>
+      </div>
+
+      <div class="option-btn" onclick="activateProcedure('hang')">
+        <div class="opt-code">[SYM-04]</div>
+        <div class="opt-name">Zawieszenie wątku (Pętla nieskończona)</div>
+        <div class="opt-desc">Karta przeglądarki przestaje odpowiadać na zdarzenia, obciążenie procesora rośnie.</div>
+      </div>
+    </div>
+
+    <!-- PROCEDURA SYM-01 -->
+    <div id="proc_runtime" class="procedure-panel">
+      <div class="proc-header">Instrukcja postępowania dla [SYM-01]: Wyjątek w czasie wykonania</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Lokalizacja linii błędu przez odnośnik w konsoli</h4>
+          <p>W oknie Console (F12) zlokalizuj odnośnik do pliku źródłowego umieszczony po prawej stronie komunikatu błędu (np. <code class="tech-code">skrypt.js:32</code>). Kliknięcie przenosi bezpośrednio do linii wywołującej wyjątek w zakładce Sources.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Weryfikacja referencji do węzła DOM</h4>
+          <p>Jeżeli wyjątek to <code class="tech-code">TypeError: Cannot read properties of null</code>, obiekt przed separatorem właściwości nie istnieje w modelu DOM. Należy sprawdzić zgodność identyfikatora w wywołaniu <code class="tech-code">document.getElementById()</code> z atrybutem <code class="tech-code">id</code> w dokumencie HTML.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Wstrzymanie wykonania przed instrukcją krytyczną</h4>
+          <p>Wstaw instrukcję <code class="tech-code">debugger;</code> w linii poprzedzającej wyjątek. Odśwież stronę, aby zbadać rejestr zmiennych w panelu Scope przed wystąpieniem błędu.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCEDURA SYM-02 -->
+    <div id="proc_no_event" class="procedure-panel">
+      <div class="proc-header">Instrukcja postępowania dla [SYM-02]: Brak reakcji na zdarzenie</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Weryfikacja wejścia do procedury obsługi</h4>
+          <p>Umieść instrukcję <code class="tech-code">debugger;</code> w pierwszej linii wewnątrz funkcji obsługującej zdarzenie. Jeżeli wykonanie nie zostanie wstrzymane po kliknięciu, procedura nie jest wywoływana przez przeglądarkę.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Kontrola rejestracji zdarzeń (Event Listeners)</h4>
+          <p>W zakładce Elements wskaż analizowany element interfejsu (przycisk, pole formularza) i przejdź do podpanelu <strong>Event Listeners</strong>. Upewnij się, że zdarzenie <code class="tech-code">click</code> lub <code class="tech-code">submit</code> jest formalnie przypisane do węzła.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Kolejność ładowania struktury DOM</h4>
+          <p>Upewnij się, że element DOM istniał w momencie wykonywania skryptu przypisującego zdarzenie (znacznik <code class="tech-code">&lt;script&gt;</code> powinien znajdować się przed zamknięciem <code class="tech-code">&lt;/body&gt;</code> lub posiadać atrybut <code class="tech-code">defer</code>).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCEDURA SYM-03 -->
+    <div id="proc_type_error" class="procedure-panel">
+      <div class="proc-header">Instrukcja postępowania dla [SYM-03]: Nieprawidłowy wynik (Konwersja typów)</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Identyfikacja niejawnej konkatenacji łańcuchów znakowych</h4>
+          <p>Właściwość <code class="tech-code">input.value</code> zwraca dane typu String. Operacja <code class="tech-code">"10" + 5</code> skutkuje konkatenacją tekstową (<code class="tech-code">"105"</code>). Dodaj w panelu Watch wyrażenie <code class="tech-code">typeof zmienna</code>, aby potwierdzić typ danych.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Zastosowanie jawnej konwersji</h4>
+          <p>Wprowadź konwersję numeryczną za pomocą <code class="tech-code">Number()</code>, <code class="tech-code">parseInt(wartosc, 10)</code> lub <code class="tech-code">parseFloat(wartosc)</code> przed wykonaniem operacji sumowania.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Analiza kroku obliczeniowego</h4>
+          <p>Zatrzymaj kod w punkcie obliczeń i używaj klawisza <span class="kbd-shortcut" style="padding:1px 4px;border:1px solid #475569;border-radius:2px;font-family:var(--font-mono);font-size:11px;">F10</span>, obserwując zmiany rejestrów w panelu Scope.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCEDURA SYM-04 -->
+    <div id="proc_hang" class="procedure-panel">
+      <div class="proc-header">Instrukcja postępowania dla [SYM-04]: Pętla nieskończona</div>
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Weryfikacja warunku stopu oraz kroku iteracyjnego</h4>
+          <p>Sprawdź poprawność predykatu zakończenia w pętli <code class="tech-code">while</code> lub <code class="tech-code">for</code>. Upewnij się, że licznik iteracji ulega inkrementacji (<code class="tech-code">i++</code>) i dąży do wartości granicznej.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Wstrzymanie przed uruchomieniem pętli</h4>
+          <p>Otwórz narzędzia deweloperskie (F12) <strong>przed</strong> wywołaniem akcji. Wstaw instrukcję <code class="tech-code">debugger;</code> przed nagłówkiem pętli, aby kontrolować przebieg iteracji krok po kroku (<span class="kbd-shortcut" style="padding:1px 4px;border:1px solid #475569;border-radius:2px;font-family:var(--font-mono);font-size:11px;">F10</span>).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function activateProcedure(type) {
+    document.querySelectorAll('.procedure-panel').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.option-btn').forEach(el => el.classList.remove('active'));
+
+    const panel = document.getElementById('proc_' + type);
+    if (panel) {
+      panel.style.display = 'block';
+    }
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorium Diagnostyki Kodu: Zadania Praktyczne | INF.03</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #38bdf8;
+      --accent-success: #34d399;
+      --accent-error: #f87171;
+      --code-bg: #090d16;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px 80px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-link:hover {
+      background: #273549;
+      border-color: var(--accent-primary);
+    }
+
+    .header-block {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 20px 24px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .doc-meta {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .lead-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .notice-bar {
+      border: 1px solid #475569;
+      background: #090d16;
+      border-left: 4px solid #64748b;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .status-summary {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .status-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+    .progress-track {
+      flex: 1;
+      height: 8px;
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-primary);
+      transition: width 0.3s ease;
+    }
+    .status-count {
+      font-size: 13px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .lab-card {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .lab-card.verified {
+      border-color: #059669;
+      background: #0f241d;
+    }
+
+    .lab-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+    .lab-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+    .lab-status-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid #475569;
+      color: #94a3b8;
+      background: #090d16;
+    }
+    .lab-status-tag.verified {
+      border-color: #059669;
+      color: #6ee7b7;
+      background: #064e3b;
+    }
+
+    .lab-instruction {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .code-box {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .code-bp {
+      color: var(--accent-primary);
+      font-weight: 700;
+    }
+    .code-rem {
+      color: #64748b;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .btn-exec {
+      background: #2563eb;
+      color: #fff;
+      border: 1px solid #1d4ed8;
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-exec:hover { background: #1d4ed8; }
+
+    .verification-row {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .verify-label {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: #cbd5e1;
+    }
+    .input-field {
+      background: #1e293b;
+      border: 1px solid #475569;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      min-width: 180px;
+      outline: none;
+    }
+    .input-field:focus {
+      border-color: var(--accent-primary);
+    }
+    .btn-check {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .btn-check:hover {
+      background: #475569;
+    }
+    .result-text {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav">
+    <a href="index.html" class="btn-link">← Przejdź do spisu modułów</a>
+    <a href="karta_ratunkowa_sciaga.html" class="btn-link">Arkusz referencyjny skrótów</a>
+  </div>
+
+  <div class="header-block">
+    <div class="doc-meta">STANOWISKO DIAGNOSTYCZNE // KWALIFIKACJA INF.03 / INF.04</div>
+    <h1>Laboratorium Diagnostyki Kodu: Zadania Praktyczne</h1>
+    <p class="lead-text">Praktyczna analiza przepływu sterowania, rejestrów pamięci (Scope) i stosu wywołań w środowisku uruchomieniowym przeglądarki.</p>
+  </div>
+
+  <div class="notice-bar">
+    WYMÓG FORMALNY: Przed uruchomieniem procedury testowej należy otworzyć narzędzia deweloperskie klawiszem [F12].
+  </div>
+
+  <div class="status-summary">
+    <div class="status-label">Wskaźnik wykonania:</div>
+    <div class="progress-track">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="progressCount" class="status-count">0 / 5 zweryfikowanych</div>
+  </div>
+
+  <!-- ZADANIE LAB-01 -->
+  <div class="lab-card" id="card_lab1">
+    <div class="lab-header">
+      <div class="lab-title">[LAB-01] Indeksacja tablic i błąd off-by-one</div>
+      <span class="lab-status-tag" id="tag_lab1">OCZEKUJE</span>
+    </div>
+    <div class="lab-instruction">
+      Funkcja oblicza sumę elementów tablicy 4-elementowej <code>[5, 4, 3, 5]</code>. Wynik ewaluacji to <code>NaN</code>.
+      Uruchom procedurę, zatrzymaj kod w debuggerze, wykonuj krok instrukcji (<span style="font-family:var(--font-mono);font-weight:700">F10</span>) i odczytaj w panelu Scope wartość zmiennej <code>oceny[i]</code> w ostatniej iteracji.
+    </div>
+    <div class="code-box">
+const oceny = [5, 4, 3, 5];
+let suma = 0;
+<span class="code-bp">debugger;</span>
+for (let i = 0; i &lt;= oceny.length; i++) {
+    suma += oceny[i];
+}
+    </div>
+    <div class="control-row">
+      <button class="btn-exec" onclick="execLab1()">Uruchom procedurę testową</button>
+    </div>
+    <div class="verification-row">
+      <span class="verify-label">Wartość oceny[i] w ostatnim kroku pętli:</span>
+      <input type="text" id="ans_lab1" class="input-field" placeholder="Wpisz wartość parametru">
+      <button class="btn-check" onclick="verifyLab1()">Weryfikuj</button>
+      <span id="res_lab1" class="result-text"></span>
+    </div>
+  </div>
+
+  <!-- ZADANIE LAB-02 -->
+  <div class="lab-card" id="card_lab2">
+    <div class="lab-header">
+      <div class="lab-title">[LAB-02] Niejawna konwersja typów danych (String / Number)</div>
+      <span class="lab-status-tag" id="tag_lab2">OCZEKUJE</span>
+    </div>
+    <div class="lab-instruction">
+      Wartość wejściowa pobrana z interfejsu formularza reprezentuje koszt biletu (50) i opłatę rezerwacyjną (15). Rezultat dodawania to "5015".
+      Zatrzymaj wykonanie na instrukcji <code class="code-bp">debugger;</code>, zbadaj typ danych parametru <code>cenaBiletu</code> w panelu Watch za pomocą <code class="code-bp">typeof cenaBiletu</code>.
+    </div>
+    <div class="code-box">
+const cenaBiletu = "50"; <span class="code-rem">// Odczyt z właściwości input.value</span>
+const rezerwacja = 15;
+<span class="code-bp">debugger;</span>
+const razem = cenaBiletu + rezerwacja; <span class="code-rem">// Wynik ewaluacji: "5015"</span>
+    </div>
+    <div class="control-row">
+      <button class="btn-exec" onclick="execLab2()">Uruchom procedurę testową</button>
+    </div>
+    <div class="verification-row">
+      <span class="verify-label">Typ zmiennej cenaBiletu (typeof):</span>
+      <input type="text" id="ans_lab2" class="input-field" placeholder="Wpisz identyfikator typu">
+      <button class="btn-check" onclick="verifyLab2()">Weryfikuj</button>
+      <span id="res_lab2" class="result-text"></span>
+    </div>
+  </div>
+
+  <!-- ZADANIE LAB-03 -->
+  <div class="lab-card" id="card_lab3">
+    <div class="lab-header">
+      <div class="lab-title">[LAB-03] Analiza stosu wywołań (Call Stack)</div>
+      <span class="lab-status-tag" id="tag_lab3">OCZEKUJE</span>
+    </div>
+    <div class="lab-instruction">
+      Funkcja <code>obliczSrednia()</code> otrzymuje niedozwolony parametr zerowy.
+      Zatrzymaj kod w debuggerze i odczytaj w panelu <strong>Call Stack</strong> nazwę funkcji, która bezpośrednio wywołała procedurę <code>obliczSrednia</code>.
+    </div>
+    <div class="code-box">
+function zlozRaportRoczny() { przeliczKwartal(); }
+function przeliczKwartal() { generujStatystyki(); }
+function generujStatystyki() { obliczSrednia(0); }
+function obliczSrednia(dzielnik) {
+    <span class="code-bp">debugger;</span>
+    return 1000 / dzielnik;
+}
+    </div>
+    <div class="control-row">
+      <button class="btn-exec" onclick="execLab3()">Uruchom procedurę testową</button>
+    </div>
+    <div class="verification-row">
+      <span class="verify-label">Nazwa funkcji wywołującej w Call Stack:</span>
+      <input type="text" id="ans_lab3" class="input-field" placeholder="Wpisz identyfikator funkcji">
+      <button class="btn-check" onclick="verifyLab3()">Weryfikuj</button>
+      <span id="res_lab3" class="result-text"></span>
+    </div>
+  </div>
+
+  <!-- ZADANIE LAB-04 -->
+  <div class="lab-card" id="card_lab4">
+    <div class="lab-header">
+      <div class="lab-title">[LAB-04] Punkt wstrzymania warunkowy (Conditional Breakpoint)</div>
+      <span class="lab-status-tag" id="tag_lab4">OCZEKUJE</span>
+    </div>
+    <div class="lab-instruction">
+      Zbiór 100 rekordów zawiera błąd w rekordzie o indeksie <code>k = 73</code>.
+      W zakładce Sources zdefiniuj punkt wstrzymania warunkowy pod prawym przyciskiem myszy (<code class="code-bp">k === 73</code>) lub zbadaj stan pamięci przy tym indeksie bez wielokrotnego wznawiania.
+    </div>
+    <div class="code-box">
+const transakcje = Array.from({length: 100}, (_, idx) => (idx === 73 ? "ERR_KWOTA_NIEPOPRAWNA" : 10));
+<span class="code-bp">debugger;</span>
+for (let k = 0; k &lt; transakcje.length; k++) {
+    let kwota = transakcje[k];
+}
+    </div>
+    <div class="control-row">
+      <button class="btn-exec" onclick="execLab4()">Uruchom procedurę testową</button>
+    </div>
+    <div class="verification-row">
+      <span class="verify-label">Wartość zmiennej kwota dla k = 73:</span>
+      <input type="text" id="ans_lab4" class="input-field" placeholder="Wpisz wartość">
+      <button class="btn-check" onclick="verifyLab4()">Weryfikuj</button>
+      <span id="res_lab4" class="result-text"></span>
+    </div>
+  </div>
+
+  <!-- ZADANIE LAB-05 -->
+  <div class="lab-card" id="card_lab5">
+    <div class="lab-header">
+      <div class="lab-title">[LAB-05] Weryfikacja referencji do węzła DOM (Wartość null)</div>
+      <span class="lab-status-tag" id="tag_lab5">OCZEKUJE</span>
+    </div>
+    <div class="lab-instruction">
+      Skrypt próbuje zmodyfikować właściwość <code>innerText</code> węzła dokumentu, którego identyfikator nie istnieje w strukturze HTML.
+      Zatrzymaj wykonanie skryptu i wskaż wartość zwracaną przez <code>document.getElementById()</code> przy braku trafienia.
+    </div>
+    <div class="code-box">
+const el = document.getElementById('brakujacy_wezel_html');
+<span class="code-bp">debugger;</span>
+if (el) {
+    el.innerText = "Aktualizacja";
+}
+    </div>
+    <div class="control-row">
+      <button class="btn-exec" onclick="execLab5()">Uruchom procedurę testową</button>
+    </div>
+    <div class="verification-row">
+      <span class="verify-label">Wartość parametru el przy braku węzła:</span>
+      <input type="text" id="ans_lab5" class="input-field" placeholder="Wpisz wartość typu">
+      <button class="btn-check" onclick="verifyLab5()">Weryfikuj</button>
+      <span id="res_lab5" class="result-text"></span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let verifiedSet = new Set();
+
+  function updateStatusMetric() {
+    const total = 5;
+    const count = verifiedSet.size;
+    const pct = (count / total) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressCount').innerText = `${count} / ${total} zweryfikowanych`;
+  }
+
+  function execLab1() {
+    const oceny = [5, 4, 3, 5];
+    let suma = 0;
+    debugger;
+    for (let i = 0; i <= oceny.length; i++) {
+      suma += oceny[i];
+    }
+  }
+  function verifyLab1() {
+    const v = document.getElementById('ans_lab1').value.trim().toLowerCase();
+    if (v === 'undefined') {
+      setSuccess('lab1', 'WYNIK ZGODNY: Indeks wykracza poza zakres (0..3), zwracając typ undefined.');
+    } else {
+      setError('lab1', 'NIEZGODNOŚĆ: Zbadaj odczyt oceny[4] w panelu Scope.');
+    }
+  }
+
+  function execLab2() {
+    const cenaBiletu = "50";
+    const rezerwacja = 15;
+    debugger;
+    const razem = cenaBiletu + rezerwacja;
+  }
+  function verifyLab2() {
+    const v = document.getElementById('ans_lab2').value.trim().toLowerCase().replace(/['"]/g, '');
+    if (v === 'string') {
+      setSuccess('lab2', 'WYNIK ZGODNY: Właściwość zwraca typ String; operator + wykonuje konkatenację.');
+    } else {
+      setError('lab2', 'NIEZGODNOŚĆ: Sprawdź wynik operacji typeof cenaBiletu.');
+    }
+  }
+
+  function execLab3() {
+    function zlozRaportRoczny() { przeliczKwartal(); }
+    function przeliczKwartal() { generujStatystyki(); }
+    function generujStatystyki() { obliczSrednia(0); }
+    function obliczSrednia(dzielnik) {
+      debugger;
+      return 1000 / (dzielnik || 1);
+    }
+    zlozRaportRoczny();
+  }
+  function verifyLab3() {
+    const v = document.getElementById('ans_lab3').value.trim().toLowerCase();
+    if (v.includes('generujstatystyki')) {
+      setSuccess('lab3', 'WYNIK ZGODNY: Ramka stosu wskazuje funkcję generujStatystyki().');
+    } else {
+      setError('lab3', 'NIEZGODNOŚĆ: Sprawdź ramkę bezpośrednio poniżej obliczSrednia w panelu Call Stack.');
+    }
+  }
+
+  function execLab4() {
+    const transakcje = Array.from({length: 100}, (_, idx) => (idx === 73 ? "ERR_KWOTA_NIEPOPRAWNA" : 10));
+    debugger;
+    for (let k = 0; k < transakcje.length; k++) {
+      let kwota = transakcje[k];
+    }
+  }
+  function verifyLab4() {
+    const v = document.getElementById('ans_lab4').value.trim().replace(/['"]/g, '');
+    if (v === 'ERR_KWOTA_NIEPOPRAWNA') {
+      setSuccess('lab4', 'WYNIK ZGODNY: Rekord zidentyfikowany poprawnie przy warunku k === 73.');
+    } else {
+      setError('lab4', 'NIEZGODNOŚĆ: Odczytaj wartość parametru kwota dla indeksu k === 73.');
+    }
+  }
+
+  function execLab5() {
+    const el = document.getElementById('brakujacy_wezel_html');
+    debugger;
+    if (el) {
+      el.innerText = "Aktualizacja";
+    }
+  }
+  function verifyLab5() {
+    const v = document.getElementById('ans_lab5').value.trim().toLowerCase();
+    if (v === 'null') {
+      setSuccess('lab5', 'WYNIK ZGODNY: document.getElementById() zwraca wartość null przy braku dopasowania.');
+    } else {
+      setError('lab5', 'NIEZGODNOŚĆ: Sprawdź wartość parametru el w panelu Scope.');
+    }
+  }
+
+  function setSuccess(id, msg) {
+    verifiedSet.add(id);
+    document.getElementById('card_' + id).classList.add('verified');
+    const tag = document.getElementById('tag_' + id);
+    tag.classList.add('verified');
+    tag.innerText = 'ZWERYFIKOWANO';
+    const res = document.getElementById('res_' + id);
+    res.style.color = 'var(--accent-success)';
+    res.innerText = msg;
+    updateStatusMetric();
+  }
+
+  function setError(id, msg) {
+    const res = document.getElementById('res_' + id);
+    res.style.color = 'var(--accent-error)';
+    res.innerText = msg;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arkusz Referencyjny: Debugger JavaScript (DevTools) | INF.03</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #38bdf8;
+      --accent-muted: #64748b;
+      --code-bg: #090d16;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .btn-link {
+      color: var(--accent-primary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      background: var(--card-bg);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-link:hover {
+      background: #273549;
+      border-color: var(--accent-primary);
+    }
+    .btn-print {
+      cursor: pointer;
+    }
+
+    .header-block {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      padding: 20px 24px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    .doc-meta {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-primary);
+      font-weight: 700;
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .lead-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .callout-instruction {
+      border: 1px solid #1e3a5f;
+      background: #0d1e36;
+      border-left: 4px solid var(--accent-primary);
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .callout-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: var(--font-mono);
+    }
+    .callout-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .grid-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 768px) {
+      .grid-sections { grid-template-columns: 1fr; }
+    }
+
+    .panel-box {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 18px;
+    }
+    .panel-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      color: #fff;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+      font-family: var(--font-mono);
+    }
+
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .tech-table th, .tech-table td {
+      padding: 9px 8px;
+      text-align: left;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      vertical-align: top;
+    }
+    .tech-table tr:last-child td { border-bottom: none; }
+    .kbd-shortcut {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 6px;
+      background: #090d16;
+      border: 1px solid #475569;
+      border-radius: 3px;
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .tech-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tech-item {
+      padding: 10px 12px;
+      background: #090d16;
+      border-left: 3px solid #475569;
+      border-radius: 0 4px 4px 0;
+    }
+    .tech-item-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+      font-family: var(--font-mono);
+    }
+    .tech-item-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .principles-box {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 18px;
+    }
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 650px) {
+      .principles-grid { grid-template-columns: 1fr; }
+    }
+    .principle-item {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 12px;
+    }
+    .principle-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin-bottom: 4px;
+    }
+    .principle-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .principle-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    code.snippet {
+      font-family: var(--font-mono);
+      background: #090d16;
+      padding: 2px 5px;
+      border: 1px solid #334155;
+      border-radius: 3px;
+      color: #38bdf8;
+      font-size: 12px;
+    }
+
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        font-size: 10pt;
+      }
+      .no-print { display: none !important; }
+      .header-block, .panel-box, .callout-instruction, .principles-box, .tech-item, .principle-item {
+        background: #fff !important;
+        border: 1px solid #94a3b8 !important;
+        color: #000 !important;
+        box-shadow: none !important;
+      }
+      h1, .panel-box-title, .tech-item-name, .principle-title, .callout-title {
+        color: #000 !important;
+      }
+      .lead-text, .callout-desc, .tech-item-desc, .principle-desc, td {
+        color: #1e293b !important;
+      }
+      .kbd-shortcut, code.snippet {
+        background: #f1f5f9 !important;
+        color: #000 !important;
+        border: 1px solid #64748b !important;
+      }
+      .doc-meta, .principle-num {
+        color: #000 !important;
+      }
+      .grid-sections { gap: 10px; margin-bottom: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top-nav no-print">
+    <a href="index.html" class="btn-link">← Przejdź do spisu modułów</a>
+    <button onclick="window.print()" class="btn-link btn-print">Wydruk referencyjny (A4)</button>
+  </div>
+
+  <div class="header-block">
+    <div class="doc-meta">DOKUMENTACJA REFERENCYJNA // KWALIFIKACJA INF.03 / INF.04</div>
+    <h1>Arkusz Referencyjny: Debugger JavaScript w Przeglądarce</h1>
+    <p class="lead-text">Zestawienie skrótów klawiaturowych, rejestrów pamięci i procedur kontroli przepływu sterowania w narzędziach deweloperskich (DevTools).</p>
+  </div>
+
+  <div class="callout-instruction">
+    <div class="callout-title">Instrukcja wstrzymania wykonania: Słowo kluczowe debugger;</div>
+    <div class="callout-desc">
+      Wpisanie instrukcji <code class="snippet">debugger;</code> w kodzie źródłowym powoduje bezwarunkowe zawieszenie wykonywania wątku JavaScript w wyznaczonej linii (odpowiednik programowego punktu wstrzymania), pod warunkiem, że narzędzia deweloperskie (F12) są otwarte w oknie przeglądarki.
+    </div>
+  </div>
+
+  <div class="grid-sections">
+    <div class="panel-box">
+      <div class="panel-box-title">1. Sterowanie Przepływem Wykonania</div>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th style="width: 25%">Skrót</th>
+            <th style="width: 35%">Funkcja</th>
+            <th style="width: 40%">Działanie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="kbd-shortcut">F8</span></td>
+            <td><strong>Resume script</strong></td>
+            <td>Wznowienie wykonywania skryptu do napotkania kolejnego punktu wstrzymania.</td>
+          </tr>
+          <tr>
+            <td><span class="kbd-shortcut">F10</span></td>
+            <td><strong>Step over</strong></td>
+            <td>Wykonanie bieżącej instrukcji i przejście do kolejnej linii w tym samym zasięgu.</td>
+          </tr>
+          <tr>
+            <td><span class="kbd-shortcut">F11</span></td>
+            <td><strong>Step into</strong></td>
+            <td>Wejście do wnętrza wywoływanej funkcji w celu analizy jej ciała.</td>
+          </tr>
+          <tr>
+            <td><span class="kbd-shortcut">Shift + F11</span></td>
+            <td><strong>Step out</strong></td>
+            <td>Dokończenie wykonywania bieżącej funkcji i powrót do kontekstu wywołującego.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel-box">
+      <div class="panel-box-title">2. Panele Inspekcyjne (Zakładka Sources)</div>
+      <div class="tech-list">
+        <div class="tech-item">
+          <div class="tech-item-name">Scope (Zasięg Zmiennych)</div>
+          <div class="tech-item-desc">Udostępnia aktualne wartości identyfikatorów w podziale na zasięg lokalny (Local), blokowy (Block) oraz globalny (Global).</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-name">Watch (Obserwowane Wyrażenia)</div>
+          <div class="tech-item-desc">Umożliwia ewaluację dowolnych wyrażeń JS (np. <code class="snippet">typeof x</code>, <code class="snippet">tablica.length</code>) w każdym kroku pętli.</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-name">Call Stack (Stos Wywołań)</div>
+          <div class="tech-item-desc">Hierarchiczna lista aktywnych ramek stosu. Pozwala prześledzić sekwencję wywołań, która doprowadziła do bieżącego stanu.</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-name">Breakpoints (Punkty Wstrzymania)</div>
+          <div class="tech-item-desc">Rejestr aktywnych pułapek. Obsługuje warunki logiczne (Conditional Breakpoint) definiowane pod prawym przyciskiem myszy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="principles-box">
+    <div class="panel-box-title">3. Standard Diagnostyczny Kodu w Egzaminie Praktycznym</div>
+    <div class="principles-grid">
+      <div class="principle-item">
+        <div class="principle-num">[REG-01]</div>
+        <div class="principle-title">Weryfikacja Typów Zmiennych</div>
+        <div class="principle-desc">Pola formularzy HTML (<code class="snippet">input.value</code>) zawsze zwracają dane typu String. Przed operacjami arytmetycznymi należy sprawdzić typ w panelu Scope/Watch.</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">[REG-02]</div>
+        <div class="principle-title">Analiza Granic Pętli</div>
+        <div class="principle-desc">Błędy typu off-by-one (odczyt poza rozmiarem tablicy) należy diagnozować poprzez weryfikację wartości indeksu w ostatniej iteracji pętli.</div>
+      </div>
+      <div class="principle-item">
+        <div class="principle-num">[REG-03]</div>
+        <div class="principle-title">Izolacja Przed Awarią</div>
+        <div class="principle-desc">Punkt wstrzymania należy lokalizować 1–2 instrukcje przed linią zgłaszającą wyjątek w konsoli, aby ocenić argumenty wejściowe.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

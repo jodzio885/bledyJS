@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Błąd JS #01: Cannot read properties of null | Pogotowie Błędów</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-red: #ef4444;
+      --accent-red-bg: #451a1a;
+      --accent-green: #22c55e;
+      --accent-green-bg: #14532d;
+      --accent-blue: #38bdf8;
+      --accent-yellow: #f59e0b;
+      --code-bg: #090d16;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-red-bg);
+      color: #fca5a5;
+      border: 1px solid #7f1d1d;
+    }
+
+    .nav-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-link:hover { text-decoration: underline; }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-top: 8px;
+      color: #fff;
+    }
+
+    /* ERROR BANNER */
+    .error-banner {
+      background: #2a1215;
+      border-left: 5px solid var(--accent-red);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .error-banner-title {
+      font-size: 13px;
+      color: #fca5a5;
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .error-text {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: #fecaca;
+      word-break: break-all;
+    }
+    .error-alt {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* SECTION CARDS */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* CODE BOXES */
+    pre, code {
+      font-family: var(--font-mono);
+    }
+    pre {
+      background: var(--code-bg);
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 14px;
+      border: 1px solid #1e293b;
+      margin: 10px 0;
+    }
+    code.inline {
+      background: #334155;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    @media (max-width: 720px) {
+      .diff-grid { grid-template-columns: 1fr; }
+    }
+    .diff-col {
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 14px;
+    }
+    .diff-bad {
+      background: #2a1215;
+      border: 1px solid #7f1d1d;
+    }
+    .diff-good {
+      background: #0f291e;
+      border: 1px solid #14532d;
+    }
+    .diff-header {
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .diff-bad .diff-header { color: #f87171; }
+    .diff-good .diff-header { color: #4ade80; }
+
+    /* SIMULATOR & CONSOLE */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    button.btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    button.btn:hover {
+      background: #475569;
+      border-color: #64748b;
+    }
+    button.btn-danger {
+      background: #991b1b;
+      border-color: #dc2626;
+    }
+    button.btn-danger:hover {
+      background: #b91c1c;
+    }
+    button.btn-success {
+      background: #166534;
+      border-color: #22c55e;
+    }
+    button.btn-success:hover {
+      background: #15803d;
+    }
+
+    .mock-console {
+      background: #000;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      min-height: 80px;
+      color: #e2e8f0;
+    }
+    .mock-console-header {
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 11px;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+    .console-msg-error {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #ef4444;
+      margin-bottom: 4px;
+    }
+    .console-msg-success {
+      color: #4ade80;
+      background: rgba(34, 197, 94, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border-left: 3px solid #22c55e;
+      margin-bottom: 4px;
+    }
+
+    /* QUIZ / EXERCISE */
+    .quiz-box {
+      background: #0b1329;
+      border: 1px solid #1e3a8a;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .quiz-option {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin-top: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .quiz-option:hover {
+      background: #334155;
+    }
+    .quiz-option.correct {
+      background: #14532d;
+      border-color: #22c55e;
+      color: #86efac;
+    }
+    .quiz-option.wrong {
+      background: #451a1a;
+      border-color: #ef4444;
+      color: #fca5a5;
+    }
+    .quiz-feedback {
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    ul.bullet-list {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+    ul.bullet-list li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <span class="badge">Karta Błędu JS #01</span>
+        <h1>Cannot read properties of null</h1>
+      </div>
+      <a href="index.html" class="nav-link">← Powrót do spisu błędów</a>
+    </header>
+
+    <!-- BANNER BŁĘDU -->
+    <div class="error-banner">
+      <div class="error-banner-title">Komunikat w konsoli (Chrome / Edge / V8):</div>
+      <div class="error-text">Uncaught TypeError: Cannot read properties of null (reading 'addEventListener')</div>
+      <div class="error-alt">Warianty: <code class="inline">(reading 'value')</code>, <code class="inline">(reading 'innerHTML')</code>, dawniej: <code class="inline">Cannot read property '...' of null</code></div>
+    </div>
+
+    <!-- 1. DIAGNOZA W 30 SEKUND -->
+    <div class="card">
+      <div class="card-title">1. Opis i przyczyna wystąpienia błędu</div>
+      <p>Próbujesz odczytać właściwość (np. <code class="inline">.value</code>) lub wywołać funkcję (np. <code class="inline">.addEventListener()</code>) na obiekcie, który... <strong>w ogóle nie istnieje w pamięci</strong> – jest równy <code class="inline">null</code>.</p>
+      <br>
+      <p>W 95% przypadków w zadaniach szkolnych i na egzaminie INF.03 oznacza to:</p>
+      <ul class="bullet-list">
+        <li>Użyłeś <code class="inline">document.getElementById(...)</code> lub <code class="inline">document.querySelector(...)</code>, ale JavaScript <strong>nie znalazł takiego elementu na stronie</strong> i zwrócił <code class="inline">null</code>.</li>
+        <li>Skrypt wykonał się <strong>zanim przeglądarka zdążyła wczytać kod HTML</strong>.</li>
+      </ul>
+    </div>
+
+    <!-- 2. INTERAKTYWNY POLIGON -->
+    <div class="card">
+      <div class="card-title">2. Środowisko testowe: Symulacja błędu w DevTools</div>
+      <p style="margin-bottom: 12px; font-size: 14px; color: var(--text-muted);">
+        Otwórz konsolę deweloperską przeglądarki (<kbd>F12</kbd> lub <kbd>Ctrl + Shift + I</kbd> → zakładka <strong>Console</strong>), a następnie klikaj poniższe przyciski:
+      </p>
+
+      <div class="btn-group">
+        <button class="btn btn-danger" onclick="triggerError1()">Symulacja: Literówka w ID elementu</button>
+        <button class="btn btn-danger" onclick="triggerError2()">Symulacja: Brakujący '#' w querySelector</button>
+        <button class="btn btn-success" onclick="triggerSuccess()">Kod poprawny (zabezpieczony)</button>
+        <button class="btn" onclick="clearConsoleLog()">Czyść podgląd</button>
+      </div>
+
+      <div class="mock-console">
+        <div class="mock-console-header">
+          <span>PODGLĄD KONSOLI (WIRTUALNA REPLIKA KONSOLI F12)</span>
+          <span id="consoleStatus">Gotowa</span>
+        </div>
+        <div id="consoleOutput">
+          <span style="color: #64748b;">// Kliknij jeden z powyższych przycisków, aby wywołać błąd...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. TRZY NAJCZĘSTSZE PRZYCZYNY NA INF.03 -->
+    <div class="card">
+      <div class="card-title">3. Typowe przyczyny wystąpienia błędu (INF.03)</div>
+
+      <div style="margin-bottom: 16px;">
+        <h4 style="color: var(--accent-yellow); margin-bottom: 4px;">Pułapka 1: Skrypt w sekcji &lt;head&gt; bez atrybutu defer</h4>
+        <p style="font-size: 14px;">Gdy skrypt ładuje się w nagłówku strony, przeglądarka wykonuje go <em>zanim</em> odczyta znaczniki w &lt;body&gt;. W chwili wywołania element jeszcze nie powstał!</p>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <h4 style="color: var(--accent-yellow); margin-bottom: 4px;">Pułapka 2: Literówka w nazwie identyfikatora</h4>
+        <p style="font-size: 14px;">W pliku HTML masz <code class="inline">&lt;button id="przyciskOblicz"&gt;</code>, a w JS wpisujesz <code class="inline">document.getElementById('przycisk_oblicz')</code> lub <code class="inline">getElementById('przyciskoblicz')</code>. Wielkość liter i znaki mają kluczowe znaczenie!</p>
+      </div>
+
+      <div>
+        <h4 style="color: var(--accent-yellow); margin-bottom: 4px;">Pułapka 3: Zapomniany hash '#' w querySelector</h4>
+        <p style="font-size: 14px;">Pamiętaj: <code class="inline">getElementById('btn')</code> pobiera bez hasha, ale <code class="inline">querySelector('#btn')</code> <strong>musi mieć znak #</strong> dla id lub kropkę <strong>.</strong> dla klasy!</p>
+      </div>
+    </div>
+
+    <!-- 4. WZORCE NAPRAWY (PRZED I PO) -->
+    <div class="card">
+      <div class="card-title">4. Standardowe procedury naprawcze</div>
+
+      <div class="diff-grid">
+        <div class="diff-col diff-bad">
+          <div class="diff-header">KOD NIEPOPRAWNY (Wywołuje błąd)</div>
+<pre><code>&lt;!-- HTML w sekcji HEAD --&gt;
+&lt;script src="skrypt.js"&gt;&lt;/script&gt;
+
+// skrypt.js
+const btn = document.getElementById('przycisk');
+// Jeśli nie ma takiego ID, btn to null!
+btn.addEventListener('click', () => {
+  alert('Kliknięto');
+});</code></pre>
+        </div>
+
+        <div class="diff-col diff-good">
+          <div class="diff-header">KOD POPRAWNY (Rozwiązanie: defer)</div>
+<pre><code>&lt;!-- Dodaj atrybut defer --&gt;
+&lt;script src="skrypt.js" defer&gt;&lt;/script&gt;
+
+// lub umieść &lt;script&gt; na samym 
+// końcu &lt;body&gt; tuż przed &lt;/body&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="diff-grid">
+        <div class="diff-col diff-good" style="grid-column: 1 / -1;">
+          <div class="diff-header">ROZWIĄZANIE ZALECANE (Guard Clause / Weryfikacja referencji)</div>
+          <p style="font-size: 14px; margin-bottom: 8px;">Dobra praktyka programistyczna – zanim cokolwiek zrobisz z elementem, sprawdź czy istnieje:</p>
+<pre><code>const btn = document.getElementById('przycisk');
+
+if (btn) {
+  // Ten kod wykona się TYLKO wtedy, gdy przycisk rzeczywiście istnieje!
+  btn.addEventListener('click', () => {
+    console.log('Działa!');
+  });
+} else {
+  console.warn('Uwaga: Nie znaleziono przycisku o id "przycisk" w dokumencie HTML!');
+}</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SPRAWDŹ SIĘ (QUIZ DLA UCZNIA) -->
+    <div class="card">
+      <div class="card-title">5. Zadanie sprawdzające</div>
+      <p>W pliku HTML masz kod: <code class="inline">&lt;input type="text" id="liczbaA"&gt;</code>. Który z poniższych zapisów w JS <strong>NIE</strong> wywoła błędu <em>Cannot read properties of null</em>?</p>
+
+      <div class="quiz-box">
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'getElementById oczekuje samej nazwy bez hasha (#). Zwróci null!')">
+          A) <code>const val = document.getElementById('#liczbaA').value;</code>
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this, true, 'Świetnie! querySelector z prefiksem # poprawnie znajduje element po id!')">
+          B) <code>const val = document.querySelector('#liczbaA')?.value;</code>
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'W HTML jest liczbaA (wielkie A), a tu wpisano liczbaa (małe a). Zwróci null!')">
+          C) <code>const val = document.getElementById('liczbaa').value;</code>
+        </div>
+        <div class="quiz-option" onclick="checkQuiz(this, false, 'querySelector(\'liczbaA\') szuka znacznika HTML &lt;liczbaA&gt;, którego nie ma!')">
+          D) <code>const val = document.querySelector('liczbaA').value;</code>
+        </div>
+
+        <div id="quizFeedback" class="quiz-feedback"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const output = document.getElementById('consoleOutput');
+    const status = document.getElementById('consoleStatus');
+
+    function logErrorToMockConsole(msg, fileLine) {
+      status.textContent = 'Błąd runtime!';
+      status.style.color = '#f87171';
+      output.innerHTML = `
+        <div class="console-msg-error">
+          <strong>[BŁĄD] Uncaught TypeError:</strong> ${msg}
+          <div style="font-size: 11px; color: #fca5a5; margin-top: 3px;">at ${fileLine}</div>
+        </div>
+      `;
+    }
+
+    function logSuccessToMockConsole(msg) {
+      status.textContent = 'Sukces';
+      status.style.color = '#4ade80';
+      output.innerHTML = `
+        <div class="console-msg-success">
+          <strong> Sukces:</strong> ${msg}
+        </div>
+      `;
+    }
+
+    function clearConsoleLog() {
+      output.innerHTML = '<span style="color: #64748b;">// Konsola wyczyszczona. Wybierz akcję powyżej.</span>';
+      status.textContent = 'Gotowa';
+      status.style.color = '#64748b';
+    }
+
+    function triggerError1() {
+      // Wywołanie autentycznego błędu w runtime (widocznego w F12)
+      try {
+        const fakeElem = document.getElementById('nieistniejacy_przycisk');
+        fakeElem.addEventListener('click', () => {});
+      } catch (err) {
+        logErrorToMockConsole("Cannot read properties of null (reading 'addEventListener')", "skrypt.js:14:10");
+        console.error("Autentyczny błąd wywołany na poligonie:", err);
+      }
+    }
+
+    function triggerError2() {
+      try {
+        // querySelector bez # szuka znacznika HTML <mojPrzycisk>
+        const fakeElem = document.querySelector('mojPrzycisk');
+        fakeElem.innerHTML = "Nowy tekst";
+      } catch (err) {
+        logErrorToMockConsole("Cannot read properties of null (reading 'innerHTML')", "skrypt.js:28:15");
+        console.error("Autentyczny błąd wywołany na poligonie:", err);
+      }
+    }
+
+    function triggerSuccess() {
+      // Kod zabezpieczony
+      const elem = document.getElementById('nieistniejacy_przycisk');
+      if (elem) {
+        elem.addEventListener('click', () => {});
+      } else {
+        logSuccessToMockConsole("Kod zabezpieczony! Sprawdzono (if (elem)) - uniknięto awarii aplikacji.");
+        console.log("Kod bezpieczny: element nie istniał, ale obsłużono to warunkiem 'if'.");
+      }
+    }
+
+    function checkQuiz(element, isCorrect, explanation) {
+      const options = document.querySelectorAll('.quiz-option');
+      options.forEach(opt => opt.classList.remove('correct', 'wrong'));
+      
+      const feedback = document.getElementById('quizFeedback');
+      if (isCorrect) {
+        element.classList.add('correct');
+        feedback.style.color = '#4ade80';
+        feedback.textContent = ` DOBRZE! ${explanation}`;
+      } else {
+        element.classList.add('wrong');
+        feedback.style.color = '#f87171';
+        feedback.textContent = `[ODPOWIEDŹ BŁĘDNA] ${explanation}`;
+      }
+    }
+  </script>
+</body>
+</html>

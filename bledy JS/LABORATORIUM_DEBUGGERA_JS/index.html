@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostyka i Debugowanie JavaScript | Kwalifikacja INF.03 / INF.04</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --card-hover: #273549;
+      --text-main: #f8fafc;
+      --text-secondary: #94a3b8;
+      --accent-primary: #38bdf8;
+      --code-bg: #090d16;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 30px 20px 80px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .header-panel {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 28px 30px;
+      margin-bottom: 28px;
+    }
+    .meta-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .header-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.5;
+    }
+
+    .grid-modules {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .module-card {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 22px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    .module-card:hover {
+      border-color: var(--accent-primary);
+      background: var(--card-hover);
+    }
+    .mod-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin-bottom: 6px;
+    }
+    .mod-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .mod-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .mod-link-action {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-primary);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .standard-panel {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 6px;
+      padding: 24px;
+    }
+    .standard-heading {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: var(--font-mono);
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+    }
+    .standard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 720px) {
+      .standard-grid { grid-template-columns: 1fr; }
+    }
+    .standard-col {
+      background: #090d16;
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 14px;
+    }
+    .col-id {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-primary);
+      margin-bottom: 4px;
+    }
+    .col-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .col-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header-panel">
+    <div class="meta-tag">KWALIFIKACJA INF.03 / INF.04 • PRACOWNIA PROGRAMOWANIA APLIKACJI</div>
+    <h1>Diagnostyka i Debugowanie JavaScript: Podręcznik i Laboratorium</h1>
+    <p class="header-desc">
+      Pakiet materiałów technicznych przeznaczony do nauki inspekcji kodu, kontroli przepływu sterowania i analizy rejestrów pamięci w środowisku uruchomieniowym przeglądarek internetowych.
+    </p>
+  </div>
+
+  <div class="grid-modules">
+    <!-- MODUŁ 01 -->
+    <a href="karta_ratunkowa_sciaga.html" class="module-card">
+      <div>
+        <div class="mod-id">[MODUŁ 01]</div>
+        <div class="mod-title">Arkusz Referencyjny (Skróty i Panele)</div>
+        <div class="mod-desc">
+          Zestawienie skrótów klawiaturowych sterowania krokowego (F8, F10, F11), instrukcji programowego wstrzymania (debugger;) oraz rejestrów pamięci (Scope, Watch, Call Stack). Format zoptymalizowany pod wydruk referencyjny A4.
+        </div>
+      </div>
+      <div class="mod-link-action">
+        <span>Format: Arkusz A4 / Ekran</span>
+        <span>Otwórz arkusz →</span>
+      </div>
+    </a>
+
+    <!-- MODUŁ 02 -->
+    <a href="drzewo_decyzyjne.html" class="module-card">
+      <div>
+        <div class="mod-id">[MODUŁ 02]</div>
+        <div class="mod-title">Procedura Diagnostyczna (Drzewo Decyzyjne)</div>
+        <div class="mod-desc">
+          Systematyczny algorytm postępowania w przypadku awarii skryptu: identyfikacja symptomu (wyjątek wykonania, brak propagacji zdarzenia, błąd konwersji typów, blokada wątku) i sekwencja działań naprawczych.
+        </div>
+      </div>
+      <div class="mod-link-action">
+        <span>Format: Przewodnik interaktywny</span>
+        <span>Uruchom procedurę →</span>
+      </div>
+    </a>
+
+    <!-- MODUŁ 03 -->
+    <a href="laboratorium_misje.html" class="module-card">
+      <div>
+        <div class="mod-id">[MODUŁ 03]</div>
+        <div class="mod-title">Laboratorium Diagnostyki Kodu (LAB 01–05)</div>
+        <div class="mod-desc">
+          Stanowisko ćwiczeniowe z wbudowanymi procedurami testowymi. Wymaga weryfikacji stanu pamięci na żywo w DevTools (błędy off-by-one, typowanie wejść, Call Stack, punkty warunkowe, referencje DOM null).
+        </div>
+      </div>
+      <div class="mod-link-action">
+        <span>Format: Środowisko testowe</span>
+        <span>Przejdź do laboratorium →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="standard-panel">
+    <div class="standard-heading">Standard Postępowania Diagnostycznego w Pracowni</div>
+    <div class="standard-grid">
+      <div class="standard-col">
+        <div class="col-id">[ETAP 1]</div>
+        <div class="col-title">Przygotowanie Środowiska</div>
+        <div class="col-text">Uruchomienie narzędzi deweloperskich klawiszem F12 przed wywołaniem procedur. Zapoznanie się z zawartością konsoli błędów.</div>
+      </div>
+      <div class="standard-col">
+        <div class="col-id">[ETAP 2]</div>
+        <div class="col-title">Izolacja Przepływu</div>
+        <div class="col-text">Wstawienie instrukcji debugger; w linii poprzedzającej wadliwe zachowanie oraz inspekcja zmiennych wejściowych w panelu Scope.</div>
+      </div>
+      <div class="standard-col">
+        <div class="col-id">[ETAP 3]</div>
+        <div class="col-title">Weryfikacja Krokowa</div>
+        <div class="col-text">Wykonywanie instrukcji pojedynczo (F10) z bieżącą kontrolą typów parametrów w panelu Watch (np. typeof dana) przed implementacją poprawki.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
